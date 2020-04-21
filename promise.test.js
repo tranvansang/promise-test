@@ -80,4 +80,21 @@ describe('promise', () => {
 		})
 		expect(await flipPromise(pr)).toBe(1)
 	})
+
+	test('constructor is not async', async () => {
+		let val
+		let val1
+		const pr = new Promise(resolve => {
+			val = 1
+			setTimeout(() => {
+				resolve()
+				val1 = 2
+			})
+		})
+		expect(val).toBe(1)
+		expect(val1).toBeUndefined()
+		await pr
+		expect(val).toBe(1)
+		expect(val1).toBe(2)
+	})
 })
