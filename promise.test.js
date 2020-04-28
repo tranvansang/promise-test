@@ -97,4 +97,28 @@ describe('promise', () => {
 		expect(val).toBe(1)
 		expect(val1).toBe(2)
 	})
+	test('constructor reject if error thrown', async () => {
+		await flipPromise(new Promise(() => { throw new Error('my err') }))
+	})
+	test('constructor reject if resolve then reject', async () => {
+		await new Promise(resolve => {
+			resolve()
+			throw new Error('an error')
+		})
+	})
+	test('consider the first returned (reject function)', async () => {
+		expect(await flipPromise(new Promise((resolve, reject) => {
+			reject(1)
+			throw 2
+		}))).toBe(1)
+	})
+	test('constructor execute before promise created', async () => {
+		let val = 1
+		const promise = new Promise(resolve => {
+			val = 2
+			resolve(3)
+		})
+		expect(val).toBe(2)
+		await promise
+	})
 })
