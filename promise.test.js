@@ -123,34 +123,46 @@ describe('promise', () => {
 	})
 	test('constructor execute before promise created (2)', async () => {
 		const values = {}
+		const orders = []
 		let promise = 0
 		promise = new Promise(resolve => {
 			values[0] = promise
+			orders.push(0)
 			promise = 1
 			resolve(2)
 			values[1] = promise
+			orders.push(1)
 		})
 		values[2] = await promise
+		orders.push(2)
 		promise = await promise
 		promise = new Promise(async resolve => {
 			values[3] = promise
+			orders.push(3)
 			promise = 3
 			resolve(4)
 			values[4] = promise
+			orders.push(4)
 		})
 		values[5] = await promise
+		orders.push(5)
 		promise = await promise
 		promise = new Promise(async resolve => {
 			values[6] = promise
+			orders.push(6)
 			resolve(5)
 			await new Promise(resolve => setTimeout(resolve, 100))
 			values[7] = await promise
+			orders.push(7)
 			promise = 6
 			values[10] = promise
+			orders.push(10)
 		})
 		values[8] = await promise
+		orders.push(8)
 		await new Promise(resolve => setTimeout(resolve, 100))
 		values[9] = await promise
+		orders.push(9)
 		expect(values).toEqual({
 			0: 0,
 			1: 1,
@@ -164,6 +176,7 @@ describe('promise', () => {
 			9: 5,
 			10: 6
 		})
+		expect(orders).toEqual([0, 1, 2, 3, 4, 5, 6, 8, 7, 10, 9])
 	})
 	test('setTimeout execute after assignment', () => {
 		let val = 1
