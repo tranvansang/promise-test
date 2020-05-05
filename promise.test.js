@@ -121,4 +121,53 @@ describe('promise', () => {
 		expect(val).toBe(2)
 		await promise
 	})
+	test('constructor execute before promise created (2)', async () => {
+		const values = {}
+		let promise = 0
+		promise = new Promise(resolve => {
+			values[0] = promise
+			promise = 1
+			resolve(2)
+			values[1] = promise
+		})
+		values[2] = await promise
+		promise = await promise
+		promise = new Promise(async resolve => {
+			values[3] = promise
+			promise = 3
+			resolve(4)
+			values[4] = promise
+		})
+		values[5] = await promise
+		promise = await promise
+		promise = await new Promise(async resolve => {
+			values[6] = promise
+			resolve(5)
+			await new Promise(resolve => setTimeout(resolve, 100))
+			values[7] = promise
+			promise = 6
+		})
+		values[8] = promise
+		await new Promise(resolve => setTimeout(resolve, 100))
+		values[9] = promise
+		expect(values).toEqual({
+			0: 0,
+			1: 1,
+			2: 2,
+			3: 2,
+			4: 3,
+			5: 4,
+			6: 4,
+			7: 5,
+			8: 5,
+			9: 6
+		})
+	})
+	test('setTimeout execute after assignment', () => {
+		let val = 1
+		setTimeout(() => {
+			val = 2
+		})
+		expect(val).toBe(1)
+	})
 })
