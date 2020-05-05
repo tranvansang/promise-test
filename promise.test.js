@@ -140,16 +140,16 @@ describe('promise', () => {
 		})
 		values[5] = await promise
 		promise = await promise
-		promise = await new Promise(async resolve => {
+		promise = new Promise(async resolve => {
 			values[6] = promise
 			resolve(5)
 			await new Promise(resolve => setTimeout(resolve, 100))
-			values[7] = promise
+			values[7] = await promise
 			promise = 6
 		})
-		values[8] = promise
+		values[8] = await promise
 		await new Promise(resolve => setTimeout(resolve, 100))
-		values[9] = promise
+		values[9] = await promise
 		expect(values).toEqual({
 			0: 0,
 			1: 1,
@@ -160,7 +160,7 @@ describe('promise', () => {
 			6: 4,
 			7: 5,
 			8: 5,
-			9: 6
+			9: 5
 		})
 	})
 	test('setTimeout execute after assignment', () => {
