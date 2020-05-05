@@ -146,6 +146,7 @@ describe('promise', () => {
 			await new Promise(resolve => setTimeout(resolve, 100))
 			values[7] = await promise
 			promise = 6
+			values[10] = promise
 		})
 		values[8] = await promise
 		await new Promise(resolve => setTimeout(resolve, 100))
@@ -160,7 +161,8 @@ describe('promise', () => {
 			6: 4,
 			7: 5,
 			8: 5,
-			9: 5
+			9: 5,
+			10: 6
 		})
 	})
 	test('setTimeout execute after assignment', () => {
