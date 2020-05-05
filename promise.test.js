@@ -164,26 +164,29 @@ describe('promise', () => {
 			values[1] = promise
 			orders.push(1)
 			resolve(1)
-			await new Promise(resolve => setTimeout(resolve, 100))
-			values[2] = await promise
+			values[2] = promise
 			orders.push(2)
-			promise = 2
-			values[3] = promise
+			await new Promise(resolve => setTimeout(resolve, 100))
+			values[3] = await promise
 			orders.push(3)
+			promise = 2
+			values[4] = promise
+			orders.push(4)
 		})
-		values[4] = await promise
-		orders.push(4)
-		// await new Promise(resolve => setTimeout(resolve, 100))
 		values[5] = await promise
 		orders.push(5)
+		await new Promise(resolve => setTimeout(resolve, 100)) // (*). try removing this line, result will change
+		values[6] = await promise
+		orders.push(6)
 		expect(values).toEqual({
 			1: 0,
-			// 2: 1,
-			// 3: 2,
-			4: 1,
-			5: 1
+			2: 0,
+			3: 1,
+			4: 2,
+			5: 1,
+			6: 1
 		})
-		expect(orders).toEqual([1, 4, 5])
+		expect(orders).toEqual([1, 2, 5, 3, 4, 6])
 	})
 	test('setTimeout execute after assignment', () => {
 		let val = 1
