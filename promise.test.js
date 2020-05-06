@@ -237,7 +237,7 @@ describe('promise', () => {
 		await promise
 		expect(orders).toEqual([2, 1])
 	})
-	test('async function does not stop at await', async () => {
+	test('then calls schedule orders', async () => {
 		const orders = []
 		await new Promise(async resolve => {
 			resolve()
