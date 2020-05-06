@@ -239,12 +239,14 @@ describe('promise', () => {
 	})
 	test('then calls schedule orders', async () => {
 		const orders = []
-		await new Promise(async resolve => {
+		const p = new Promise(async resolve => {
 			resolve()
 			await 0
 			orders.push(1)
 		})
 		orders.push(2)
-		expect(orders).toEqual([1, 2])
+		await p
+		orders.push(3)
+		expect(orders).toEqual([2, 1, 3])
 	})
 })
