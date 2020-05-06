@@ -211,30 +211,40 @@ describe('promise', () => {
 	})
 	test('async function stop at await', async () => {
 		let p1 = 0
-		const values = []
+		const orders = []
 		const f = async (v) => {
 			await p1
-			values.push(v)
+			orders.push(v)
 		}
 		let p2 = f(1)
-		values.push(2)
+		orders.push(2)
 		await p2
 
 		p1 = Promise.resolve()
 		p2 = f(3)
-		values.push(4)
+		orders.push(4)
 		await p2
-		expect(values).toEqual([2, 1, 4, 3])
+		expect(orders).toEqual([2, 1, 4, 3])
 	})
 	test('async function stop at await even with a static constant', async () => {
-		const values = []
-		const f = async (v) => {
+		const orders = []
+		const f = async () => {
 			await 0
-			values.push(v)
+			orders.push(1)
 		}
-		let p2 = f(1)
-		values.push(2)
-		await p2
-		expect(values).toEqual([2, 1])
+		let promise = f()
+		orders.push(2)
+		await promise
+		expect(orders).toEqual([2, 1])
+	})
+	test('async function does not stop at await', async () => {
+		const orders = []
+		await new Promise(async resolve => {
+			resolve()
+			await 0
+			orders.push(1)
+		})
+		orders.push(2)
+		expect(orders).toEqual([1, 2])
 	})
 })
