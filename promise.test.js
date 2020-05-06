@@ -166,9 +166,11 @@ describe('promise', () => {
 			resolve(1)
 			values[2] = promise
 			orders.push(2)
-			values[3] = await promise
-			orders.push(3)
-			await new Promise(resolve => setTimeout(resolve, 100))
+			await new Promise(async resolve => {
+				values[3] = await promise
+				orders.push(3)
+				setTimeout(resolve, 100)
+			})
 			values[4] = await promise
 			orders.push(4)
 			promise = 2
@@ -187,7 +189,7 @@ describe('promise', () => {
 			4: 1,
 			5: 2,
 			6: 1,
-			7: 1
+			7: 2
 		})
 		expect(orders).toEqual([1, 2, 3, 6, 4, 5, 7])
 	})
@@ -206,5 +208,33 @@ describe('promise', () => {
 			}
 		})()
 		expect(await a).toBeUndefined()
+	})
+	test('async function stop at await', async () => {
+		let p1 = 0
+		const values = []
+		const f = async (v) => {
+			await p1
+			values.push(v)
+		}
+		let p2 = f(1)
+		values.push(2)
+		await p2
+
+		p1 = Promise.resolve()
+		p2 = f(3)
+		values.push(4)
+		await p2
+		expect(values).toEqual([2, 1, 4, 3])
+	})
+	test('async function stop at await even with a static constant', async () => {
+		const values = []
+		const f = async (v) => {
+			await 0
+			values.push(v)
+		}
+		let p2 = f(1)
+		values.push(2)
+		await p2
+		expect(values).toEqual([2, 1])
 	})
 })
