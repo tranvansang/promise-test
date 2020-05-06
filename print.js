@@ -8,9 +8,11 @@
 		resolve(1)
 		values[2] = promise
 		orders.push(2)
-		values[3] = await promise
-		orders.push(3)
-		await new Promise(resolve => setTimeout(resolve, 100))
+		await new Promise(async r => {
+			values[3] = await promise
+			orders.push(3)
+			setTimeout(r, 100)
+		})
 		values[4] = await promise
 		orders.push(4)
 		promise = 2
