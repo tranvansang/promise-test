@@ -198,4 +198,13 @@ describe('promise', () => {
 		})
 		expect(val).toBe(1)
 	})
+	test('should do we await a promise return?', async () => {
+		const a = (async () => {
+			try {
+				return await Promise.reject(1)
+			} catch (e){
+			}
+		})()
+		expect(await a).toBeUndefined()
+	})
 })
